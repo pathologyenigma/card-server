@@ -1,2 +1,2 @@
 -- Add down migration script here
-DROP TABLE public.levels;
+DROP TABLE public.level_settings;
