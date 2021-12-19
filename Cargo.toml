@@ -7,14 +7,14 @@ edition = "2021"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
-warp = "0.3.1"
+warp = "0.3.2"
 dotenv = "0.15.0"
 regex = "1.5.4"
-async-graphql-warp = "3.0.2"
-sea-orm = { version = "0.4.0", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros"], default_features = false}
-tracing-subscriber = "0.3.1"
+async-graphql-warp = "3.0.17"
+sea-orm = { version = "0.4.2", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros"], default_features = false}
+tracing-subscriber = "0.3.3"
 tracing = "0.1.29"
 lazy_static = "1.4.0"
 [dependencies.async-graphql]
-version = "3.0.3"
+version = "3.0.17"
 features = ["dataloader", "uuid"]
