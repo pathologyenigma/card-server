@@ -15,6 +15,7 @@ sea-orm = { version = "0.4.2", features = ["sqlx-postgres", "runtime-tokio-rustl
 tracing-subscriber = "0.3.3"
 tracing = "0.1.29"
 lazy_static = "1.4.0"
+tantivy = "0.16.1"
 [dependencies.async-graphql]
 version = "3.0.17"
 features = ["dataloader", "uuid"]

@@ -47,7 +47,7 @@ async fn main() -> Result<(), DbErr> {
                         StatusCode::BAD_REQUEST,
                     ));
                 }
-
+                println!("{:?}", err);
                 Ok(warp::reply::with_status(
                     "INTERNAL_SERVER_ERROR".to_string(),
                     StatusCode::INTERNAL_SERVER_ERROR,
