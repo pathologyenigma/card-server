@@ -1,5 +1,1 @@
-
-
-pub struct Handler {
-    
-}
+pub struct Handler {}

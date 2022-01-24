@@ -14,7 +14,12 @@ impl ErrorHandler for BadInputErrorHandler {
     type ErrorType = Error;
 
     fn append(&mut self, name: &'static str, value: &'static str) {
-        self.errors = Some(self.errors.clone().unwrap_or(Error::new("Bad Input")).extend_with(|_, e| e.set(name, value)));
+        self.errors = Some(
+            self.errors
+                .clone()
+                .unwrap_or(Error::new("Bad Input"))
+                .extend_with(|_, e| e.set(name, value)),
+        );
     }
 
     fn to_err(self) -> Self::ErrorType {
@@ -24,9 +29,7 @@ impl ErrorHandler for BadInputErrorHandler {
 
 impl Default for BadInputErrorHandler {
     fn default() -> Self {
-        Self {
-            errors: None,
-        }
+        Self { errors: None }
     }
 }
 

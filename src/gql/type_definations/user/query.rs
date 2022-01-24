@@ -1,15 +1,10 @@
-use tracing::{info, error};
+use super::types::LoginInput;
 use crate::error_handling::{BadInputErrorHandler, ErrorHandler};
-use async_graphql::{Context, Error, InputObject, Object, Result};
+use async_graphql::{Context, Error, Object, Result};
 use sea_orm::{ColumnTrait, Condition, DbConn, EntityTrait, QueryFilter};
+use tracing::{error, info};
 #[derive(Default)]
 pub struct UserQuery;
-
-#[derive(InputObject)]
-pub struct LoginInput {
-    account: String,
-    password: String,
-}
 
 #[Object]
 impl UserQuery {

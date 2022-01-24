@@ -1,18 +1,12 @@
-use tracing::{info, error};
+use super::types::RegisterInput;
 use crate::error_handling::{BadInputErrorHandler, ErrorHandler};
 use crate::{EMAIL_VERIFICATION, PASSWORD_VERIFICATION, USERNAME_VERIFICATION};
-use async_graphql::{Context, Error, InputObject, Object, Result};
+use async_graphql::{Context, Error, Object, Result};
 use sea_orm::{entity::Set, DbConn, EntityTrait};
+use tracing::{error, info};
 #[derive(Default)]
 pub struct UserMutation;
 
-#[derive(InputObject)]
-pub struct RegisterInput {
-    username: String,
-    email: Option<String>,
-    password: String,
-    confirm_password: String,
-}
 #[Object]
 impl UserMutation {
     async fn register(&self, ctx: &Context<'_>, input: RegisterInput) -> Result<String> {
@@ -62,7 +56,15 @@ impl UserMutation {
             };
             let db = ctx.data_unchecked::<DbConn>();
             match crate::users::Entity::insert(user).exec(db).await {
-                Ok(_) => return Ok("fake token".to_string()),
+                Ok(res) => {
+                    return Ok(
+                        crate::Token::new(res.last_insert_id, username.to_string(), email)
+                            .encode(
+                                "just for now, future token will be in a config file".to_string(),
+                            )
+                            .expect("failed to pass token"),
+                    );
+                }
                 Err(err) => {
                     error!("{:?}", err);
                     return Err(Error::new_with_source(err));
