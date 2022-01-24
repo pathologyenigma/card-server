@@ -57,6 +57,7 @@ http-server is warp(I choose it is not because of actix-web's unsafe bullshits, 
 直接进入正题，谈谈其他的依赖。
 
 tantivy，文本搜索引擎，和Apache Lucene很像，在下选择该引擎作为卡池配置和卡牌设置的文本搜索功能，当然由于中文的问题需要一个额外的中文词库，这里在下选择的是cang-jie，不选择成品的es是因为java写的太吃内存了，虽然有一个基于tantivy的类似es的库，但这玩意儿作为成品来使用还太早（时间为2022-1-24，之后如果它起飞了再说，而且还得于在下研究明白tantivy之前起飞），需要git下来编译安装，crates.io上完全搜不到它的几个库，也就是说，你要作为客户端连接本地部署的这玩意儿要么就是当一个rest api来用，要么就手动复制它的代码过来通过path来在cargo中依赖（cpp直呼内行）。
+
 服务器选择的是warp（不选actix-web不是在下有unsafe洁癖，而是在下之前在工作中用过warp，相对比较熟悉，而且那时在做选型的时候正好是unsafe节奏风暴刷的最多的时候，github上搜不到actix-web，那时的rocket.rs还不支持异步运行时，实属无奈之举），warp的文档可谓是惜字如金（有些结构体和成员函数甚至是原文放送），但是由于是用的graphql，倒是也不用太多的去关注服务器本身（只需要考虑服务器性能就行了，warp的性能还行）
 
 国内对graphql的使用好像不多，这里稍微说一下，可能理解成一种特殊的rest服务，请求永远是以特定的方式进行的，而请求的类型分为三种query，mutation和subscription，顾名思义，就是请求，突变和关注，第一种获取数据，第二种操作数据，第三种监听事件（知道个大概就行了）
