@@ -17,7 +17,7 @@ pub fn build(pool: DbConn) -> Schema {
 
 pub type Schema = async_graphql::Schema<Query, Mutation, EmptySubscription>;
 mod error_handling;
-pub use error_handling::Handle as ErrorHandler;
+pub use error_handling::ErrorHandler;
 lazy_static! {
     pub static ref EMAIL_VERIFICATION: Regex = Regex::new(r"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$").unwrap();
     pub static ref USERNAME_VERIFICATION: Regex = Regex::new(r"^[\u4E00-\u9FA5A-Za-z0-9]{6,24}$").unwrap();
