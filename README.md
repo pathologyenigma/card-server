@@ -18,6 +18,7 @@
 	- tantivy
 	- build.rs
 	- sqlx-data.json
+
 *the basic layout will be like this:*
 
 *migrations for sqlx-cli to migrate databases([sqlx](https://github.com/launchbadge/sqlx) is the database driver I choose, the orm is the [sea-orm](https://github.com/SeaQL/sea-orm)), by the way I using postgresql for database* 
