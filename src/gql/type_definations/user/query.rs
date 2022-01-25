@@ -23,15 +23,16 @@ impl UserQuery {
             .expect("failed to query database");
         if let Some(user) = user {
             if user.password == input.password {
-                info!("Query.UserQuery.logIn send a response token: fake token");
-                return Ok("fake token".to_string());
+                let token = crate::tokenizer::Token::from(user).encode("just for now, future token will be in a config file".to_string()).expect("failed to parse token");
+                info!("Query.UserQuery.logIn send a response token: {}", token);
+                return Ok(token);
             } else {
                 error!("bad input: wrong password");
-                bad_input_error_handler.append("password", "wrong password");
+                bad_input_error_handler.append("password".to_string(), "wrong password".to_string());
             }
         } else {
             error!("bad input: user not found");
-            bad_input_error_handler.append("account", "user not found");
+            bad_input_error_handler.append("account".to_string(), "user not found".to_string());
         }
         if !bad_input_error_handler.is_none() {
             return Err(bad_input_error_handler.to_err());

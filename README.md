@@ -63,6 +63,15 @@ tantivy，文本搜索引擎，和Apache Lucene很像，在下选择该引擎作
 国内对graphql的使用好像不多，这里稍微说一下，可能理解成一种特殊的rest服务，请求永远是以特定的方式进行的，而请求的类型分为三种query，mutation和subscription，顾名思义，就是请求，突变和关注，第一种获取数据，第二种操作数据，第三种监听事件（知道个大概就行了）
 ## TODOS
  - [ ] users management(用户管理)
+	 - [x] ~~normal register and login~~
+	 - [x] ~~jsonwebtoken response when login succeed~~
+	 - [ ] token from header
+	 - [ ] search user by id
+	 - [ ] friends//this is an optional feature may not show up in early versions
+		 - [ ] send friend invite request
+		 - [ ] friend lists
+		 - [ ] custom friend list
+		 - [ ] chat with friend
  - [ ] card setting and card pool setting（卡牌和卡池设置）
  - [ ] history for card draw（抽卡记录）
  - [ ] algorithm for card draw（抽卡的算法，这里是指提供可以配置的抽卡算法）

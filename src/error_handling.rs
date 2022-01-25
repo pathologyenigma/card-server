@@ -1,7 +1,7 @@
 pub use async_graphql::{Error, ErrorExtensions};
 pub trait ErrorHandler {
     type ErrorType;
-    fn append(&mut self, name: &'static str, value: &'static str);
+    fn append(&mut self, name: String, value: String);
     fn to_err(self) -> Self::ErrorType;
 }
 
@@ -13,7 +13,7 @@ pub struct BadInputErrorHandler {
 impl ErrorHandler for BadInputErrorHandler {
     type ErrorType = Error;
 
-    fn append(&mut self, name: &'static str, value: &'static str) {
+    fn append(&mut self, name: String, value: String) {
         self.errors = Some(
             self.errors
                 .clone()

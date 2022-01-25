@@ -1,6 +1,5 @@
 use super::types::RegisterInput;
 use crate::error_handling::{BadInputErrorHandler, ErrorHandler};
-use crate::{EMAIL_VERIFICATION, PASSWORD_VERIFICATION, USERNAME_VERIFICATION};
 use async_graphql::{Context, Error, Object, Result};
 use sea_orm::{entity::Set, DbConn, EntityTrait};
 use tracing::{error, info};
@@ -13,40 +12,15 @@ impl UserMutation {
         info!("Mutation.UserMutation.register accepted one request");
         let mut bad_input_error_handler = ctx.data_unchecked::<BadInputErrorHandler>().clone();
         let username = input.username.trim();
-        if username.is_empty() {
-            bad_input_error_handler.append("username", "empty username is not allowed");
-        } else if !USERNAME_VERIFICATION.is_match(username) {
-            bad_input_error_handler.append("username", "invalid username")
-        }
         let password = input.password.trim();
-        if password.is_empty() {
-            bad_input_error_handler.append("password", "empty password is not allowed");
-        } else if !PASSWORD_VERIFICATION.is_match(password) {
-            bad_input_error_handler.append(
-                "password",
-                "your password is too weak or the length is not in the range [8,16]",
-            );
-        }
+        let email = input.email;
         let confirm_password = input.confirm_password.trim();
-        if confirm_password.is_empty() {
-            bad_input_error_handler.append("confirm_password", "empty password is not allowed");
-        } else if confirm_password != password {
+        if confirm_password != password {
             bad_input_error_handler.append(
-                "confirm_password",
-                "confirm password not match the password",
+                "confirm_password".to_string(),
+                "confirm password not match the password".to_string(),
             );
         }
-        let email = match input.email {
-            Some(email) => {
-                if !EMAIL_VERIFICATION.is_match(email.trim()) {
-                    bad_input_error_handler.append("email", "not a valid email address");
-                    None
-                } else {
-                    Some(email)
-                }
-            }
-            None => None,
-        };
         if bad_input_error_handler.is_none() {
             let user = crate::users::ActiveModel {
                 username: Set(username.to_owned()),
@@ -67,7 +41,29 @@ impl UserMutation {
                 }
                 Err(err) => {
                     error!("{:?}", err);
-                    return Err(Error::new_with_source(err));
+                    match err {
+                        sea_orm::DbErr::Query(err) => {
+                            if err.contains("重复键违反唯一约束") {
+                                let res: Vec<&str> = err.split("\"").collect();
+                                match res[1] {
+                                    "username_unique" => {
+                                        let msg = format!("username {} is taken", username);
+                                        bad_input_error_handler.append("username".to_string(), msg);
+                                    },
+                                    "email_unique" => {
+                                        let msg = format!("email {} already binded, you can try login with this email instead", email.unwrap());
+                                        bad_input_error_handler.append("email".to_string(), msg);
+                                    },
+                                    _ => {
+                                        return Err(Error::new_with_source("unknown error"));
+                                    }
+                                }
+                            } else {
+                                return Err(Error::new_with_source(err));
+                            }
+                        }
+                        _ => return Err(Error::new_with_source(err)),
+                    }
                 }
             }
         }
