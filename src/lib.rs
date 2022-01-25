@@ -29,7 +29,8 @@ lazy_static! {
         Regex::new(r"^[\u4E00-\u9FA5A-Za-z0-9]{6,24}$").unwrap();
     pub static ref PASSWORD_VERIFICATION: Regex = Regex::new(r"^[a-zA-Z]\w{8,16}$").unwrap();
 }
-
+#[derive(Clone, Debug)]
+pub struct TokenFromHeader(pub String);
 #[cfg(test)]
 mod tests {
     use async_graphql::extensions::Extension;

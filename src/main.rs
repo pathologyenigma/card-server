@@ -1,10 +1,12 @@
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql_warp::{GraphQLBadRequest, GraphQLResponse};
+use card_server::TokenFromHeader;
 use dotenv;
 use sea_orm::{Database, DbErr};
 use std::convert::Infallible;
 use tracing::log::{error, info};
 use warp::{http::Response, hyper::StatusCode, Filter, Rejection};
+
 #[tokio::main]
 async fn main() -> Result<(), DbErr> {
     dotenv::dotenv().ok();
@@ -28,8 +30,13 @@ async fn main() -> Result<(), DbErr> {
             .allow_headers(vec!["X-PINGOTHER", "Content-Type"])
             .allow_methods(vec!["GET", "POST", "DELETE"]);
         let schema = card_server::build(conn);
-        let graphql_post = async_graphql_warp::graphql(schema).and_then(
-            |(schema, request): (card_server::Schema, async_graphql::Request)| async move {
+        let graphql_post = warp::header::optional::<String>("token")
+        .and(async_graphql_warp::graphql(schema.clone()))
+        .and_then(
+            |token, (schema, mut request): (card_server::Schema, async_graphql::Request)| async move {
+                if let Some(token) = token {
+                    request = request.data(TokenFromHeader(token));
+                }
                 Ok::<_, Infallible>(GraphQLResponse::from(schema.execute(request).await))
             },
         );

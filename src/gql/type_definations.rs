@@ -7,3 +7,4 @@ pub struct Query(user::UserQuery);
 
 #[derive(MergedObject, Default)]
 pub struct Mutation(user::UserMutation);
+pub struct Subscription;
