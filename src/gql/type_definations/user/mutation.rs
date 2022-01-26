@@ -1,5 +1,5 @@
 use super::types::RegisterInput;
-use crate::error_handling::{BadInputErrorHandler, ErrorHandler};
+use crate::error_handling::{BadInputErrorHandler, ErrorHandlerWithErrorExtensions};
 use async_graphql::{Context, Error, Object, Result};
 use sea_orm::{entity::Set, DbConn, EntityTrait};
 use tracing::{error, info};

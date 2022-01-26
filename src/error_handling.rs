@@ -1,5 +1,5 @@
 pub use async_graphql::{Error, ErrorExtensions};
-pub trait ErrorHandler {
+pub trait ErrorHandlerWithErrorExtensions {
     type ErrorType;
     fn append(&mut self, name: String, value: String);
     fn to_err(self) -> Self::ErrorType;
@@ -10,14 +10,14 @@ pub struct BadInputErrorHandler {
     errors: Option<Error>,
 }
 
-impl ErrorHandler for BadInputErrorHandler {
+impl ErrorHandlerWithErrorExtensions for BadInputErrorHandler {
     type ErrorType = Error;
 
     fn append(&mut self, name: String, value: String) {
         self.errors = Some(
             self.errors
                 .clone()
-                .unwrap_or(Error::new("Bad Input"))
+                .unwrap_or(Error::new("400 Bad Input"))
                 .extend_with(|_, e| e.set(name, value)),
         );
     }
@@ -38,3 +38,7 @@ impl BadInputErrorHandler {
         self.errors.is_none()
     }
 }
+pub fn new_not_authenticated_error() -> Error {
+    Error::new("401 Not Authenticated")
+}
+

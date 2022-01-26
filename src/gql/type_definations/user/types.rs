@@ -1,5 +1,4 @@
-use async_graphql::CustomValidator;
-use async_graphql::InputObject;
+use async_graphql::{InputObject, SimpleObject, CustomValidator};
 struct EmailValidator;
 impl CustomValidator<String> for EmailValidator {
     fn check(&self, value: &String) -> Result<(), String> {
@@ -63,4 +62,11 @@ pub struct LoginInput {
     /// same rule with register password
     #[graphql(validator(custom = "PasswordValidator{}"))]
     pub(crate) password: String,
+}
+#[derive(SimpleObject)]
+/// user info
+/// email shows out only when user has email
+pub struct User {
+    pub username: String,
+    pub email: Option<String>
 }

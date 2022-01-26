@@ -66,7 +66,7 @@ tantivy，文本搜索引擎，和Apache Lucene很像，在下选择该引擎作
 	 - [x] ~~normal register and login~~
 	 - [x] ~~jsonwebtoken response when login succeed~~
 	 - [x] ~~token from header~~
-	 - [ ] search user by id
+	 - [x] ~~search user by id~~
 	 - [ ] friends//this is an optional feature may not show up in early versions
 		 - [ ] send friend invite request
 		 - [ ] friend lists

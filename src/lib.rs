@@ -21,7 +21,7 @@ mod tokenizer;
 pub use tokenizer::Token;
 pub type Schema = async_graphql::Schema<Query, Mutation, EmptySubscription>;
 mod error_handling;
-pub use error_handling::ErrorHandler;
+pub use error_handling::*;
 lazy_static! {
     pub static ref EMAIL_VERIFICATION: Regex =
         Regex::new(r"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$").unwrap();
