@@ -1,7 +1,8 @@
 # card server
 
-![Rust](https://github.com/pathologyenigma/card_server/actions/workflows/test.yml/badge.svg)(https://github.com/pathologyenigma/card_server/actions/workflows/test.yml)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)(https://opensource.org/licenses/MIT)
+[![Rust](https://github.com/pathologyenigma/card_server/actions/workflows/rust.yml/badge.svg)](https://github.com/pathologyenigma/card_server/actions/workflows/rust.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 *a small open source server build for you to simulate the card game card drawing, card and card pool could be customised, could share your settings to community*
 
 一个小型的抽卡模拟器服务端，可自定义卡牌和卡池设置以及分享你的设置到社区
