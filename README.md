@@ -76,9 +76,30 @@ tantivy，文本搜索引擎，和Apache Lucene很像，在下选择该引擎作
 		 - [ ] custom friend list
 		 - [ ] chat with friend
  - [ ] card setting and card pool setting（卡牌和卡池设置）
+	 - [ ] level setting like how rare this card is（等级设置，或者说稀有度设置）
+	 - [ ] card descriptions（卡牌描述）
+		 - [ ] text fields --like name and description（文本类，像名字和简介之类的）
+		 - [ ] picture -- using link only not support upload file（图片类的，只支持连接，不支持上传文件，别问，问就是文件服务在本地部署的情况下没有什么意义）
+	 - [ ] card pool settings
+		 - [ ] probability
+		 - [ ] algorithm
+		 - [ ] depth how many times you need to reach the big price（深度，也可以说是保底）
  - [ ] history for card draw（抽卡记录）
- - [ ] algorithm for card draw（抽卡的算法，这里是指提供可以配置的抽卡算法）
  - [ ] community for sharing（社区功能，主要用于分享配置）
+	 - [ ] shared with picture（用图片分享）
+	 - [ ] shared using article（使用社区文章分享）
+	 - [ ] show community articles（查看社区文章）
+	 - [ ] articles without sharing things（正常的文章）
+	 - [ ] recomments to articles（文章评论和回复）
+	 - [ ] thumbs and sort for articles（点赞，并为社区文章提供相关排序）
  - [ ] import and export card pool settings（卡池设置的导入导出）
+	 - [ ] save card pool settings to json
+	 - [ ] save card descriptions to csv
+	 - [ ] load card pool settings from json
+	 - [ ] load card descriptions from csv
+	 - [ ] import card pool settings from sharing link
  - [ ] card description and card pool setting sharing text search（可供搜索的卡牌描述和卡池分享）
+	 - [ ] search keyword in community articles to find the card pool settings you want
+	 - [ ] search keyword in card descriptions to find the card you want
+	 - [ ] classify cards by level setting or some other thing that is not settled yet
  - [ ] statistics for card draw historys（抽卡记录统计分析）
