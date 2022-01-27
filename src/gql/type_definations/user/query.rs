@@ -45,31 +45,41 @@ impl UserQuery {
         let token = ctx.data_opt::<crate::TokenFromHeader>();
         match token {
             Some(token) => {
-                match id {
-                    Some(id) => {
-                        let db = ctx.data_unchecked::<DbConn>();
-                        let mut bad_input_error_handler = ctx.data_unchecked::<BadInputErrorHandler>().clone();
-                        let user = crate::users::Entity::find()
-                        .filter(Condition::all().add(crate::users::Column::Id.eq(id)))
-                        .one(db).await.expect("failed to query database");
-                        match user {
-                            Some(user) => {
-                                return Ok(User{username: user.username, email: user.email});
+                info!("Query.UserQuery.getUserInfoById accepted one request with token: {}", token.0);
+                let token = crate::Token::decode(token.0.clone(), "just for now, future token will be in a config file".to_string());
+                match token {
+                    Ok(token) => {
+                        match id {
+                            Some(id) => {
+                                let db = ctx.data_unchecked::<DbConn>();
+                                let mut bad_input_error_handler = ctx.data_unchecked::<BadInputErrorHandler>().clone();
+                                let user = crate::users::Entity::find()
+                                .filter(Condition::all().add(crate::users::Column::Id.eq(id)))
+                                .one(db).await.expect("failed to query database");
+                                match user {
+                                    Some(user) => {
+                                        return Ok(User{username: user.username, email: user.email});
+                                    },
+                                    None => {
+                                        bad_input_error_handler.append("id".to_string(), format!("user of id {} is not exist", id));
+                                        return Err(bad_input_error_handler.to_err());
+                                    }
+                                }
                             },
                             None => {
-                                bad_input_error_handler.append("id".to_string(), format!("user of id {} is not exist", id));
-                                return Err(bad_input_error_handler.to_err());
+                                return Ok(User{ username: token.username, email: token.email });
                             }
                         }
                     },
-                    None => {
-                        let token = crate::Token::decode(token.0.clone(), "just for now, future token will be in a config file".to_string()).expect("failed to decode token");
-                        return Ok(User{ username: token.username, email: token.email });
+                    Err(err) => {
+                        return Err(err);
                     }
                 }
+                
             },
             None => {
-                return Err(crate::new_not_authenticated_error());
+                error!("Query.UserQuery.getUserInfoById accepted one request without token");
+                return Err(crate::new_not_authenticated_error("miss token in header".to_string()));
             }
         }
         
