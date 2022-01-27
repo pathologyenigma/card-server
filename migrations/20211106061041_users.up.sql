@@ -15,9 +15,10 @@ CREATE TABLE public.users
 (
     id integer NOT NULL DEFAULT nextval('users_id_seq'::regclass),
     username character varying(24) COLLATE pg_catalog."default" NOT NULL,
-    password character varying(64) COLLATE pg_catalog."default" NOT NULL,
     email character varying(64) COLLATE pg_catalog."default",
+    password character varying(64) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT users_pkey PRIMARY KEY (id),
+    CONSTRAINT email_unique UNIQUE (email),
     CONSTRAINT username_unique UNIQUE (username)
 )
 

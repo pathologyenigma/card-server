@@ -3,9 +3,15 @@ CREATE TABLE public.level_settings
 (
     id uuid NOT NULL,
     user_id integer NOT NULL,
-    name character varying(32) COLLATE pg_catalog."default" NOT NULL,
-    datas jsonb NOT NULL,
-    CONSTRAINT levels_pkey PRIMARY KEY (id)
+    title character varying(120) COLLATE pg_catalog."default" NOT NULL,
+    is_numberic_level boolean NOT NULL,
+    levels character varying[] COLLATE pg_catalog."default" NOT NULL,
+    counts integer,
+    CONSTRAINT level_settings_pkey PRIMARY KEY (id),
+    CONSTRAINT user_id FOREIGN KEY (user_id)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 )
 
 TABLESPACE pg_default;
@@ -13,41 +19,16 @@ TABLESPACE pg_default;
 ALTER TABLE public.level_settings
     OWNER to postgres;
 
-COMMENT ON TABLE public.level_settings
-    IS 'for every game or some thing that have card pool, everything in the card pool should have level, this table just for user to custom their owns, you can custom your level design.';
+COMMENT ON COLUMN public.level_settings.title
+    IS 'the title of the level setting, like a simple description of your level setting';
 
-COMMENT ON COLUMN public.level_settings.user_id
-    IS 'stands for one to many relation for users and this table';
+COMMENT ON COLUMN public.level_settings.is_numberic_level
+    IS 'true for level like one star, two stars, three stars...
+false for level like n, r, sr, ssr';
 
-COMMENT ON COLUMN public.level_settings.name
-    IS 'the name of your level design';
+COMMENT ON COLUMN public.level_settings.levels
+    IS 'numberic level will only have one value here.
+non-numberic level will put all level names here.';
 
-COMMENT ON COLUMN public.level_settings.datas
-    IS 'this is the settings and the items of your level, for example, here is a genshin impact style card pool level json:
-{
-  "name": "star",
-  "numberic": "true",
-  "color_changed": "true",
-  "range": [ 3, 5 ],
-  "colors": [
-    {
-      "r": 0,
-      "g": 0,
-      "b": 100
-    },
-    {
-      "r": 160,
-      "g": 32,
-      "b": 240
-    },
-    {
-      "r": 228,
-      "g": 175,
-      "b": 55
-    }
-  ],
-  "items": {
-    "names": "default",
-    "images": "url here, if not numberic may be array"
-  }
-}';
+COMMENT ON COLUMN public.level_settings.counts
+    IS 'only needs for numberic level';

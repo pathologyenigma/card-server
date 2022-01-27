@@ -8,9 +8,11 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     pub user_id: i32,
-    pub name: String,
-    #[sea_orm(column_type = "Custom(\"jsonb\".to_owned())")]
-    pub datas: String,
+    pub title: String,
+    pub is_numberic_level: bool,
+    #[sea_orm(column_type = "Custom(\"array\".to_owned())")]
+    pub levels: String,
+    pub counts: Option<i32>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -19,23 +21,15 @@ pub enum Relation {
         belongs_to = "super::users::Entity",
         from = "Column::UserId",
         to = "super::users::Column::Id",
-        on_update = "SetNull",
+        on_update = "Cascade",
         on_delete = "Cascade"
     )]
     Users,
-    #[sea_orm(has_many = "super::cards::Entity")]
-    Cards,
 }
 
 impl Related<super::users::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Users.def()
-    }
-}
-
-impl Related<super::cards::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Cards.def()
     }
 }
 
