@@ -1,10 +1,12 @@
 use async_graphql::MergedObject;
 
-mod user;
-pub use user::types as user_types;
 mod level_setting;
+mod user;
 #[derive(MergedObject, Default)]
-pub struct Query(user::query::UserQuery);
+pub struct Query(
+    user::query::UserQuery,
+    level_setting::query::LevelSettingQuery,
+);
 
 #[derive(MergedObject, Default)]
 pub struct Mutation(

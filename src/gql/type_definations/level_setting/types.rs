@@ -105,5 +105,24 @@ pub struct LevelSetting {
     pub is_numberic_level: bool,
     pub levels: Vec<String>,
     pub counts: Option<i32>,
-    pub tip_for_setting_user: Option<String>,
+    pub tip_for_setting_user: String,
+}
+
+impl From<crate::entity::level_settings::Model> for LevelSetting {
+    fn from(value: crate::entity::level_settings::Model) -> Self {
+        Self {
+            id: value.id.to_string(),
+            title: value.title,
+            is_numberic_level: value.is_numberic_level,
+            levels: value
+                .levels
+                .as_array()
+                .unwrap()
+                .into_iter()
+                .map(|item| item.as_str().unwrap().to_string())
+                .collect(),
+            counts: value.counts,
+            tip_for_setting_user: value.tip_for_setting_user,
+        }
+    }
 }

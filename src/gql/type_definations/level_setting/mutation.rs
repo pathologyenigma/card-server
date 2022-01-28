@@ -54,7 +54,9 @@ impl LevelSettingMutation {
                                     is_numberic_level: prefixed_input.is_numberic_level,
                                     levels: prefixed_input.levels,
                                     counts: prefixed_input.counts,
-                                    tip_for_setting_user: prefixed_input.tip_for_setting_user,
+                                    tip_for_setting_user: prefixed_input
+                                        .tip_for_setting_user
+                                        .unwrap(),
                                 });
                             }
                             Err(err) => match err {

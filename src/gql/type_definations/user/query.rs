@@ -1,8 +1,6 @@
 use super::types::LoginInput;
-use crate::{
-    error_handling::{BadInputErrorHandler, ErrorHandlerWithErrorExtensions},
-    user_types::User,
-};
+use super::types::User;
+use crate::error_handling::{BadInputErrorHandler, ErrorHandlerWithErrorExtensions};
 use async_graphql::{Context, Error, Object, Result};
 use sea_orm::{ColumnTrait, Condition, DbConn, EntityTrait, QueryFilter};
 use tracing::{error, info};
