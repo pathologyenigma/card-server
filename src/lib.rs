@@ -33,15 +33,15 @@ lazy_static! {
 pub struct TokenFromHeader(pub String);
 #[cfg(test)]
 mod tests {
-    use std::sync::Arc;
-    use cang_jie::CANG_JIE;
     use cang_jie::CangJieTokenizer;
     use cang_jie::TokenizerOption;
+    use cang_jie::CANG_JIE;
     use jieba_rs::Jieba;
+    use std::sync::Arc;
+    use tantivy::directory::MmapDirectory;
+    use tantivy::schema::*;
     use tantivy::Index;
     use tantivy::IndexSettings;
-    use tantivy::schema::*;
-    use tantivy::directory::MmapDirectory;
     #[test]
     fn text_search() -> tantivy::Result<()> {
         let mut schema_builder = SchemaBuilder::default();

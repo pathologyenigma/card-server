@@ -8,6 +8,7 @@ CREATE TABLE public.level_settings
     counts integer,
     tip_for_setting_user text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT level_settings_pkey PRIMARY KEY (id),
+    CONSTRAINT one_user_could_not_have_two_level_setting_of_the_same_name UNIQUE (user_id, title),
     CONSTRAINT user_id FOREIGN KEY (user_id)
         REFERENCES public.users (id) MATCH SIMPLE
         ON UPDATE CASCADE

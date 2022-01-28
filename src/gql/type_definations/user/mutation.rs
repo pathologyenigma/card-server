@@ -49,11 +49,11 @@ impl UserMutation {
                                     "username_unique" => {
                                         let msg = format!("username {} is taken", username);
                                         bad_input_error_handler.append("username".to_string(), msg);
-                                    },
+                                    }
                                     "email_unique" => {
                                         let msg = format!("email {} already binded, you can try login with this email instead", email.unwrap());
                                         bad_input_error_handler.append("email".to_string(), msg);
-                                    },
+                                    }
                                     _ => {
                                         return Err(Error::new_with_source("unknown error"));
                                     }

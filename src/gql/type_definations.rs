@@ -7,5 +7,8 @@ mod level_setting;
 pub struct Query(user::query::UserQuery);
 
 #[derive(MergedObject, Default)]
-pub struct Mutation(user::mutation::UserMutation, level_setting::mutation::LevelSettingMutation);
+pub struct Mutation(
+    user::mutation::UserMutation,
+    level_setting::mutation::LevelSettingMutation,
+);
 pub struct Subscription;

@@ -39,13 +39,9 @@ impl BadInputErrorHandler {
     }
 }
 pub fn new_not_authenticated_error(msg: String) -> Error {
-    Error::new("401 Not Authenticated").extend_with(|_, e| {
-        e.set("token", msg)
-    })
+    Error::new("401 Not Authenticated").extend_with(|_, e| e.set("token", msg))
 }
 
 pub fn new_internal_server_error(msg: String) -> Error {
-    Error::new("500 Not Authenticated").extend_with(|_, e| {
-        e.set("err_msg", msg)
-    })
+    Error::new("500 Internal Server Error").extend_with(|_, e| e.set("err_msg", msg))
 }

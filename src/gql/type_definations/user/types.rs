@@ -1,4 +1,4 @@
-use async_graphql::{InputObject, SimpleObject, CustomValidator};
+use async_graphql::{CustomValidator, InputObject, SimpleObject};
 struct EmailValidator;
 impl CustomValidator<String> for EmailValidator {
     fn check(&self, value: &String) -> Result<(), String> {
@@ -29,7 +29,8 @@ impl CustomValidator<String> for PasswordValidator {
 struct LoginAccountValidator;
 impl CustomValidator<String> for LoginAccountValidator {
     fn check(&self, value: &String) -> Result<(), String> {
-        if crate::USERNAME_VERIFICATION.is_match(value) || crate::EMAIL_VERIFICATION.is_match(value) {
+        if crate::USERNAME_VERIFICATION.is_match(value) || crate::EMAIL_VERIFICATION.is_match(value)
+        {
             return Ok(());
         }
         Err("account name should be a valid username or email".to_string())
@@ -68,5 +69,5 @@ pub struct LoginInput {
 /// email shows out only when user has email
 pub struct User {
     pub username: String,
-    pub email: Option<String>
+    pub email: Option<String>,
 }

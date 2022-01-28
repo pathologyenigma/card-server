@@ -10,6 +10,7 @@ pub struct Model {
     pub user_id: i32,
     pub title: String,
     pub is_numberic_level: bool,
+    #[sea_orm(column_type = "Custom(\"jsonb\".to_owned())")]
     pub levels: Json,
     pub counts: Option<i32>,
     #[sea_orm(column_type = "Text")]

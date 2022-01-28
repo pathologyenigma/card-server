@@ -47,23 +47,50 @@ impl Token {
             &jsonwebtoken::DecodingKey::from_secret(secret.as_ref()),
             &jsonwebtoken::Validation::new(jsonwebtoken::Algorithm::HS256),
         );
-        res.map(|token| token.claims).map_err(|e| {
-            match e.kind() {
-                jsonwebtoken::errors::ErrorKind::InvalidToken => crate::new_not_authenticated_error("InvalidToken".to_string()),
-                jsonwebtoken::errors::ErrorKind::InvalidSignature => crate::new_not_authenticated_error("InvalidSignature".to_string()),
-                jsonwebtoken::errors::ErrorKind::ExpiredSignature => crate::new_not_authenticated_error("ExpiredSignature".to_string()),
-                jsonwebtoken::errors::ErrorKind::InvalidAudience => crate::new_not_authenticated_error("InvalidAudience".to_string()),
-                jsonwebtoken::errors::ErrorKind::InvalidSubject => crate::new_not_authenticated_error("InvalidSubject".to_string()),
-                jsonwebtoken::errors::ErrorKind::InvalidIssuer => crate::new_not_authenticated_error("InvalidIssuer".to_string()),
-                jsonwebtoken::errors::ErrorKind::ImmatureSignature => crate::new_not_authenticated_error("ImmatureSignature".to_string()),
-                jsonwebtoken::errors::ErrorKind::InvalidEcdsaKey => crate::new_internal_server_error("InvalidEcdsaKey".to_string()),
-                jsonwebtoken::errors::ErrorKind::InvalidRsaKey => crate::new_internal_server_error("InvalidRsaKey".to_string()),
-                jsonwebtoken::errors::ErrorKind::InvalidAlgorithmName => crate::new_internal_server_error("InvalidAlgorithmName".to_string()),
-                jsonwebtoken::errors::ErrorKind::InvalidKeyFormat => crate::new_internal_server_error("InvalidKeyFormat".to_string()),
-                jsonwebtoken::errors::ErrorKind::InvalidAlgorithm => crate::new_internal_server_error("InvalidAlgorithm".to_string()),
-                jsonwebtoken::errors::ErrorKind::Base64(_) | jsonwebtoken::errors::ErrorKind::Json(_) | jsonwebtoken::errors::ErrorKind::Utf8(_) | jsonwebtoken::errors::ErrorKind::Crypto(_) => crate::new_not_authenticated_error("failed to parse token to json, check your token".to_string()),
-                _ => crate::new_internal_server_error("unknown error".to_string()),
+        res.map(|token| token.claims).map_err(|e| match e.kind() {
+            jsonwebtoken::errors::ErrorKind::InvalidToken => {
+                crate::new_not_authenticated_error("InvalidToken".to_string())
             }
+            jsonwebtoken::errors::ErrorKind::InvalidSignature => {
+                crate::new_not_authenticated_error("InvalidSignature".to_string())
+            }
+            jsonwebtoken::errors::ErrorKind::ExpiredSignature => {
+                crate::new_not_authenticated_error("ExpiredSignature".to_string())
+            }
+            jsonwebtoken::errors::ErrorKind::InvalidAudience => {
+                crate::new_not_authenticated_error("InvalidAudience".to_string())
+            }
+            jsonwebtoken::errors::ErrorKind::InvalidSubject => {
+                crate::new_not_authenticated_error("InvalidSubject".to_string())
+            }
+            jsonwebtoken::errors::ErrorKind::InvalidIssuer => {
+                crate::new_not_authenticated_error("InvalidIssuer".to_string())
+            }
+            jsonwebtoken::errors::ErrorKind::ImmatureSignature => {
+                crate::new_not_authenticated_error("ImmatureSignature".to_string())
+            }
+            jsonwebtoken::errors::ErrorKind::InvalidEcdsaKey => {
+                crate::new_internal_server_error("InvalidEcdsaKey".to_string())
+            }
+            jsonwebtoken::errors::ErrorKind::InvalidRsaKey => {
+                crate::new_internal_server_error("InvalidRsaKey".to_string())
+            }
+            jsonwebtoken::errors::ErrorKind::InvalidAlgorithmName => {
+                crate::new_internal_server_error("InvalidAlgorithmName".to_string())
+            }
+            jsonwebtoken::errors::ErrorKind::InvalidKeyFormat => {
+                crate::new_internal_server_error("InvalidKeyFormat".to_string())
+            }
+            jsonwebtoken::errors::ErrorKind::InvalidAlgorithm => {
+                crate::new_internal_server_error("InvalidAlgorithm".to_string())
+            }
+            jsonwebtoken::errors::ErrorKind::Base64(_)
+            | jsonwebtoken::errors::ErrorKind::Json(_)
+            | jsonwebtoken::errors::ErrorKind::Utf8(_)
+            | jsonwebtoken::errors::ErrorKind::Crypto(_) => crate::new_not_authenticated_error(
+                "failed to parse token to json, check your token".to_string(),
+            ),
+            _ => crate::new_internal_server_error("unknown error".to_string()),
         })
     }
 }
