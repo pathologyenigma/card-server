@@ -312,6 +312,7 @@ dependencies = [
  "async-graphql-warp",
  "cang-jie",
  "dotenv",
+ "jieba-rs",
  "jsonwebtoken",
  "lazy_static",
  "regex",

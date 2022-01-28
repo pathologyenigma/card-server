@@ -1,3 +1,4 @@
+#![feature(path_try_exists)]
 #[macro_use]
 extern crate tantivy;
 use async_graphql::EmptySubscription;
@@ -31,34 +32,48 @@ lazy_static! {
 }
 #[derive(Clone, Debug)]
 pub struct TokenFromHeader(pub String);
-// #[cfg(test)]
-// mod tests {
-//     use async_graphql::extensions::Extension;
-//     use tantivy::collector::TopDocs;
-//     use tantivy::query::QueryParser;
-//     use tantivy::schema::*;
-//     use tantivy::ReloadPolicy;
-//     #[test]
-//     fn text_search() -> tantivy::Result<()> {
-//         let index = tantivy::Index::open_in_dir("tantivy/wikipedia-index")?;
-//         let schema = index.load_metas()?.schema;
-//         let title = schema.get_field("title").expect("fuck it not works");
-//         let body = schema.get_field("body").expect("fuck it not works");
-//         let reader = index
-//             .reader_builder()
-//             .reload_policy(ReloadPolicy::OnCommit)
-//             .try_into()?;
-//         let searcher = reader.searcher();
-//         let query_parser = QueryParser::for_index(&index, vec![title, body]);
-//         let query = query_parser.parse_query("ok")?;
-//         let top_docs = searcher.search(&query, &TopDocs::with_limit(20))?;
-//         let mut counter = 0;
-//         for (index, (score, doc_address)) in top_docs.into_iter().enumerate() {
-//             let retrieved_doc = searcher.doc(doc_address)?;
-//             counter = index;
-//             println!("score: {}, {}", score, schema.to_json(&retrieved_doc));
-//         }
-//         println!("get {} docs in all", counter);
-//         Ok(())
-//     }
-// }
+#[cfg(test)]
+mod tests {
+    use std::sync::Arc;
+    use cang_jie::CANG_JIE;
+    use cang_jie::CangJieTokenizer;
+    use cang_jie::TokenizerOption;
+    use jieba_rs::Jieba;
+    use tantivy::Index;
+    use tantivy::IndexSettings;
+    use tantivy::collector::TopDocs;
+    use tantivy::query::QueryParser;
+    use tantivy::schema::*;
+    use tantivy::ReloadPolicy;
+    use tantivy::directory::MmapDirectory;
+    #[test]
+    fn text_search() -> tantivy::Result<()> {
+        let mut schema_builder = SchemaBuilder::default();
+        let text_indexing = TextFieldIndexing::default()
+            .set_tokenizer(CANG_JIE)
+            .set_index_option(IndexRecordOption::WithFreqsAndPositions);
+        let text_options = TextOptions::default()
+            .set_indexing_options(text_indexing)
+            .set_stored();
+        schema_builder.add_u64_field("id", STORED);
+        schema_builder.add_text_field("name", text_options.clone());
+        schema_builder.add_text_field("description", text_options);
+        schema_builder.add_text_field("logo", STORED);
+        let schema = schema_builder.build();
+        let db = std::fs::DirBuilder::new();
+        if !std::fs::try_exists("tantivy").unwrap() {
+            db.create("tantivy").unwrap();
+        }
+        if !std::fs::try_exists("tantivy/cards").unwrap() {
+            db.create("tantivy/cards").unwrap();
+        }
+        let path = MmapDirectory::open("tantivy/cards")?;
+        let index = Index::create(path, schema, IndexSettings::default())?;
+        let tokenizer = CangJieTokenizer {
+            worker: Arc::new(Jieba::empty()),
+            option: TokenizerOption::Unicode,
+        };
+        index.tokenizers().register(CANG_JIE, tokenizer);
+        Ok(())
+    }
+}
