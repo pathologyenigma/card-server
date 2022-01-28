@@ -10,11 +10,10 @@ pub struct Model {
     pub user_id: i32,
     pub title: String,
     pub is_numberic_level: bool,
-    #[sea_orm(column_type = "Custom(\"array\".to_owned())")]
-    pub levels: String,
+    pub levels: Json,
     pub counts: Option<i32>,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub tip_for_setting_user: Option<String>,
+    #[sea_orm(column_type = "Text")]
+    pub tip_for_setting_user: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

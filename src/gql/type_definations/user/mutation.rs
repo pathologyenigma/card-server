@@ -4,10 +4,10 @@ use async_graphql::{Context, Error, Object, Result};
 use sea_orm::{entity::Set, DbConn, EntityTrait};
 use tracing::{error, info};
 #[derive(Default)]
-pub struct Mutation;
+pub struct UserMutation;
 
 #[Object]
-impl Mutation {
+impl UserMutation {
     async fn register(&self, ctx: &Context<'_>, input: RegisterInput) -> Result<String> {
         info!("Mutation.UserMutation.register accepted one request");
         let mut bad_input_error_handler = ctx.data_unchecked::<BadInputErrorHandler>().clone();

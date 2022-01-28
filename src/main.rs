@@ -10,7 +10,7 @@ use warp::{http::Response, hyper::StatusCode, Filter, Rejection};
 #[tokio::main]
 async fn main() -> Result<(), DbErr> {
     dotenv::dotenv().ok();
-    tracing_subscriber::fmt().init();
+    tracing_subscriber::fmt().with_test_writer().init();
     let url =
         std::env::var("DATABASE_URL").expect("you don't have a DATABASE_URL environment variable");
     let db;
