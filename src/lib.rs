@@ -1,4 +1,3 @@
-#![feature(path_try_exists)]
 #[macro_use]
 extern crate tantivy;
 use async_graphql::EmptySubscription;
@@ -41,10 +40,7 @@ mod tests {
     use jieba_rs::Jieba;
     use tantivy::Index;
     use tantivy::IndexSettings;
-    use tantivy::collector::TopDocs;
-    use tantivy::query::QueryParser;
     use tantivy::schema::*;
-    use tantivy::ReloadPolicy;
     use tantivy::directory::MmapDirectory;
     #[test]
     fn text_search() -> tantivy::Result<()> {
@@ -61,10 +57,10 @@ mod tests {
         schema_builder.add_text_field("logo", STORED);
         let schema = schema_builder.build();
         let db = std::fs::DirBuilder::new();
-        if !std::fs::try_exists("tantivy").unwrap() {
+        if !std::path::Path::new("tantivy").exists() {
             db.create("tantivy").unwrap();
         }
-        if !std::fs::try_exists("tantivy/cards").unwrap() {
+        if !std::path::Path::new("tantivy/cards").exists() {
             db.create("tantivy/cards").unwrap();
         }
         let path = MmapDirectory::open("tantivy/cards")?;
