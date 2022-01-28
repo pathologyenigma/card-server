@@ -76,11 +76,11 @@ tantivy，文本搜索引擎，和Apache Lucene很像，在下选择该引擎作
 		 - [ ] custom friend list
 		 - [ ] chat with friend
  - [ ] card setting and card pool setting（卡牌和卡池设置）
-	 - [ ] level setting like how rare this card is（等级设置，或者说稀有度设置）
+	 - [x] ~~level setting like how rare this card is（等级设置，或者说稀有度设置）~~
 		 - [x] ~~custom different way to descript how rare this will be~~
 		 - [x] query settings created by current user
-			 - [x] query one page at time
-			 - [x] query all page at time
+			 - [x] query one page at a time
+			 - [x] query all page at a time
 	 - [ ] card descriptions（卡牌描述）
 		 - [ ] text fields --like name and description（文本类，像名字和简介之类的）
 		 - [ ] mark down support for description of the card
