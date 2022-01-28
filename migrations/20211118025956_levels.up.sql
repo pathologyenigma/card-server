@@ -1,4 +1,3 @@
--- Add up migration script here
 CREATE TABLE public.level_settings
 (
     id uuid NOT NULL,
@@ -7,6 +6,7 @@ CREATE TABLE public.level_settings
     is_numberic_level boolean NOT NULL,
     levels character varying[] COLLATE pg_catalog."default" NOT NULL,
     counts integer,
+    tip_for_setting_user text COLLATE pg_catalog."default",
     CONSTRAINT level_settings_pkey PRIMARY KEY (id),
     CONSTRAINT user_id FOREIGN KEY (user_id)
         REFERENCES public.users (id) MATCH SIMPLE

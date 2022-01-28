@@ -4,10 +4,10 @@ use async_graphql::{Context, Error, Object, Result};
 use sea_orm::{ColumnTrait, Condition, DbConn, EntityTrait, QueryFilter};
 use tracing::{error, info};
 #[derive(Default)]
-pub struct UserQuery;
+pub struct Query;
 
 #[Object]
-impl UserQuery {
+impl Query {
     async fn log_in(&self, ctx: &Context<'_>, input: LoginInput) -> Result<String> {
         info!("Query.UserQuery.logIn accepted one request");
         let db = ctx.data_unchecked::<DbConn>();

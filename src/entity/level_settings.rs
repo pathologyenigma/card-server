@@ -13,6 +13,8 @@ pub struct Model {
     #[sea_orm(column_type = "Custom(\"array\".to_owned())")]
     pub levels: String,
     pub counts: Option<i32>,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub tip_for_setting_user: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
