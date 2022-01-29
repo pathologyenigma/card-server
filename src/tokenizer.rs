@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Token {
     pub id: i32,
     pub username: String,
@@ -92,5 +92,19 @@ impl Token {
             ),
             _ => crate::new_internal_server_error("unknown error".to_string()),
         })
+    }
+}
+pub async fn on_connection_init(value: serde_json::Value) -> async_graphql::Result<async_graphql::Data> {
+    #[derive(Deserialize)]
+    struct Payload {
+        token: String,
+    }
+
+    if let Ok(payload) = serde_json::from_value::<Payload>(value) {
+        let mut data = async_graphql::Data::default();
+        data.insert(crate::TokenFromHeader(payload.token));
+        Ok(data)
+    } else {
+        Err("Token is required".into())
     }
 }

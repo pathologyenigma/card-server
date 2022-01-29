@@ -8,18 +8,24 @@ mod gql;
 pub use gql::*;
 pub mod entity;
 pub use entity::*;
+use redis::Client;
 use sea_orm::DbConn;
-mod text_search;
 pub fn build(pool: DbConn) -> Schema {
     let bad_input_error_handler = BadInputErrorHandler::default();
-    Schema::build(Query::default(), Mutation::default(), EmptySubscription)
-        .data(pool)
-        .data(bad_input_error_handler)
-        .finish()
+    let client = Client::open("redis://127.0.0.1/").unwrap();
+    Schema::build(
+        Query::default(),
+        Mutation::default(),
+        Subscription::default(),
+    )
+    .data(pool)
+    .data(bad_input_error_handler)
+    .data(client)
+    .finish()
 }
 mod tokenizer;
-pub use tokenizer::Token;
-pub type Schema = async_graphql::Schema<Query, Mutation, EmptySubscription>;
+pub use tokenizer::{Token, on_connection_init};
+pub type Schema = async_graphql::Schema<Query, Mutation, Subscription>;
 mod error_handling;
 pub use error_handling::*;
 lazy_static! {

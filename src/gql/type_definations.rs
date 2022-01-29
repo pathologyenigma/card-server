@@ -1,5 +1,6 @@
-use async_graphql::MergedObject;
+use async_graphql::{MergedObject, MergedSubscription};
 
+mod card;
 mod level_setting;
 mod user;
 #[derive(MergedObject, Default)]
@@ -13,4 +14,5 @@ pub struct Mutation(
     user::mutation::UserMutation,
     level_setting::mutation::LevelSettingMutation,
 );
-pub struct Subscription;
+#[derive(MergedSubscription, Default)]
+pub struct Subscription(level_setting::subscription::LevelSettingSubscription);

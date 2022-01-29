@@ -1,9 +1,11 @@
 use crate::BadInputErrorHandler;
 use crate::ErrorHandlerWithErrorExtensions;
 use async_graphql::{Context, Object, Result};
+use redis::{AsyncCommands, Client};
 use sea_orm::entity::*;
 use sea_orm::query::*;
 use sea_orm::DbConn;
+use serde_json::json;
 use tracing::{error, info};
 #[derive(Default)]
 pub struct LevelSettingQuery;
@@ -53,11 +55,14 @@ impl LevelSettingQuery {
             }
         }
     }
+    /// get all pages at once
+    /// this will send done! when all pages is sent
+    /// you may need to subscribe the subscription for geting page data
     async fn get_level_settings(
         &self,
         ctx: &Context<'_>,
         page_size: Option<u64>,
-    ) -> Result<Vec<Vec<super::types::LevelSetting>>> {
+    ) -> Result<String> {
         let token = ctx.data_opt::<crate::TokenFromHeader>();
         match token {
             Some(token) => {
@@ -70,18 +75,27 @@ impl LevelSettingQuery {
                     Ok(token) => {
                         let db = ctx.data_unchecked::<DbConn>();
                         let page_size = page_size.unwrap_or(10);
+                        let client = ctx.data_unchecked::<Client>();
+                        let mut conn = client.get_async_connection().await.unwrap();
                         let mut pages = crate::entity::level_settings::Entity::find()
                             .filter(crate::entity::level_settings::Column::UserId.eq(token.id))
                             .paginate(db, page_size as usize);
-                        let mut res = Vec::new();
+                        let mut page_num = 1;
                         while let Some(page) = pages.fetch_and_next().await.unwrap() {
-                            res.push(
-                                page.into_iter()
-                                    .map(|item| super::types::LevelSetting::from(item))
-                                    .collect::<Vec<super::types::LevelSetting>>(),
-                            );
+                            let data = page
+                                .into_iter()
+                                .map(|item| super::types::LevelSetting::from(item))
+                                .collect::<Vec<super::types::LevelSetting>>();
+                            let data = super::types::LevelSettingPage {
+                                data,
+                                page: page_num,
+                                page_size,
+                                user_id: token.id,
+                            };
+                            let a: () = conn.publish("level_setting_page", data).await.unwrap();
+                            page_num += 1;
                         }
-                        return Ok(res);
+                        return Ok("done!".into());
                     }
                     Err(err) => {
                         return Err(err);

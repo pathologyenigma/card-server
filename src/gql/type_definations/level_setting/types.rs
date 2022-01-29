@@ -4,7 +4,11 @@ use crate::ErrorHandlerWithErrorExtensions;
 use async_graphql::CustomValidator;
 use async_graphql::InputObject;
 use async_graphql::SimpleObject;
+use redis::FromRedisValue;
+use redis::ToRedisArgs;
 use sea_orm::Set;
+use serde_json::json;
+use warp::reply::json;
 pub struct LevelValidator;
 impl CustomValidator<Vec<String>> for LevelValidator {
     fn check(&self, value: &Vec<String>) -> Result<(), String> {
@@ -95,7 +99,7 @@ impl NewLevelSetting {
         Ok(())
     }
 }
-#[derive(SimpleObject)]
+#[derive(SimpleObject, Serialize, Deserialize)]
 /// insert result for adding a new setting
 pub struct LevelSetting {
     /// the uuid that you will got when done insert
@@ -124,5 +128,31 @@ impl From<crate::entity::level_settings::Model> for LevelSetting {
             counts: value.counts,
             tip_for_setting_user: value.tip_for_setting_user,
         }
+    }
+}
+#[derive(SimpleObject, Serialize, Deserialize)]
+pub struct LevelSettingPage {
+    pub data: Vec<LevelSetting>,
+    pub page: u32,
+    pub page_size: u64,
+    pub user_id: i32,
+}
+impl ToRedisArgs for LevelSettingPage {
+    fn write_redis_args<W>(&self, out: &mut W)
+    where
+        W: ?Sized + redis::RedisWrite,
+    {
+        out.write_arg_fmt(json!(self))
+    }
+}
+
+impl FromRedisValue for LevelSettingPage {
+    fn from_redis_value(v: &redis::Value) -> redis::RedisResult<Self> {
+        if let redis::Value::Data(value) = v {
+            let data = String::from_utf8(value.to_vec()).unwrap();
+            let res: LevelSettingPage = serde_json::from_str(data.as_str()).unwrap();
+            return Ok(res);
+        }
+        Err(redis::RedisError::from((redis::ErrorKind::TypeError, "")))
     }
 }

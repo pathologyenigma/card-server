@@ -1,11 +1,13 @@
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
-use async_graphql_warp::{GraphQLBadRequest, GraphQLResponse};
+use async_graphql_warp::{
+    graphql_subscription, GraphQLBadRequest, GraphQLResponse, GraphQLWebSocket,
+};
 use card_server::TokenFromHeader;
 use dotenv;
 use sea_orm::{Database, DbErr};
 use std::convert::Infallible;
 use tracing::log::{error, info};
-use warp::{http::Response, hyper::StatusCode, Filter, Rejection};
+use warp::{http::Response, hyper::StatusCode, Filter, Rejection, ws::Ws};
 
 #[tokio::main]
 async fn main() -> Result<(), DbErr> {
@@ -43,9 +45,34 @@ async fn main() -> Result<(), DbErr> {
         let graphql_playground = warp::path("graphql").and(warp::get()).map(|| {
             Response::builder()
                 .header("content-type", "text/html")
-                .body(playground_source(GraphQLPlaygroundConfig::new("/graphql")))
+                .body(playground_source(
+                    GraphQLPlaygroundConfig::new("/graphql").subscription_endpoint("/ws"),
+                ))
         });
-        let routes = graphql_playground
+        let subscription = warp::path!("ws")
+            .and(warp::ws())
+            .and(warp::header::optional::<String>("token"))
+            .and(warp::any().map(move || schema.clone()))
+            .and(async_graphql_warp::graphql_protocol())
+            .map(move |ws:Ws, token, schema: card_server::Schema, protocol| {
+                let reply = ws.on_upgrade(move |socket| {
+                    let mut data = async_graphql::Data::default();
+                    if let Some(token) = token {
+                        data.insert(token);
+                    }
+                    GraphQLWebSocket::new(socket, schema, protocol)
+                        .with_data(data)
+                        .on_connection_init(card_server::on_connection_init)
+                        .serve()
+                });
+                warp::reply::with_header(
+                    reply,
+                    "Sec-WebSocket-Protocol",
+                    protocol.sec_websocket_protocol(),
+                )
+            });
+        let routes = subscription
+            .or(graphql_playground)
             .or(graphql_post)
             .recover(|err: Rejection| async move {
                 if let Some(GraphQLBadRequest(err)) = err.find() {

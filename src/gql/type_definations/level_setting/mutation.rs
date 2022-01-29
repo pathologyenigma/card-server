@@ -116,6 +116,7 @@ impl LevelSettingMutation {
                                         .collect::<Vec<uuid::Uuid>>(),
                                 ),
                             )
+                            .filter(crate::entity::level_settings::Column::UserId.eq(token.id))
                             .exec(db)
                             .await
                             .unwrap()
