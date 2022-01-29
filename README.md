@@ -55,6 +55,8 @@ let's talk about some other dependencies(in nowadays, people works for web backe
 *tantivy, a text search engine like [Apache Lucene](https://lucene.apache.org/), this is used for search our card and card pool settings by keyword which is a text. because I am a chinese person, so I may also need [cang-jie](https://crates.io/crates/cang-jie) for chinese characters, not using es(elastic search) because it takes too much memory, I know there is something like es written in rust, but it just not ready for production right now(it's server and types crate is not on crate.io, wtf!) ps: this situation is at 2022-1-24(if it fix this things in the future, and I still not finish the search feature upon tantivy, I may turn to it).*
 
 *http-server is [warp](https://docs.rs/warp/)(I choose it is not because of actix-web's unsafe bullshits, just for the reason that I used to using warp in my work before, and in that time, the actix-web could not be found in github, rocket.rs is not support async runtime), warp is not having docs but the docs.rs provided(it is kind of a little annoying, when you see a struct and it's functions not having any descriptions at all). but becasue I using graphql as the api, that the web server it self is not that matter now.*
+*[2022-1-29 update] because subscription need server side cache for sending the right message to the right one, I add redis for this support, don't worry, in 2022, using redis to implement thing like this is super easy*
+
 
 如各位在上一部分所见，数据库是postgres，使用了sqlx+sea-orm的组合（由于现在的web后端基本都是crud boy，所以这方面应该无需赘述）
 
@@ -64,23 +66,24 @@ tantivy，文本搜索引擎，和Apache Lucene很像，在下选择该引擎作
 服务器选择的是warp（不选actix-web不是在下有unsafe洁癖，而是在下之前在工作中用过warp，相对比较熟悉，而且那时在做选型的时候正好是unsafe节奏风暴刷的最多的时候，github上搜不到actix-web，那时的rocket.rs还不支持异步运行时，实属无奈之举），warp的文档可谓是惜字如金（有些结构体和成员函数甚至是原文放送），但是由于是用的graphql，倒是也不用太多的去关注服务器本身（只需要考虑服务器性能就行了，warp的性能还行）
 
 国内对graphql的使用好像不多，这里稍微说一下，可能理解成一种特殊的rest服务，请求永远是以特定的方式进行的，而请求的类型分为三种query，mutation和subscription，顾名思义，就是请求，突变和关注，第一种获取数据，第二种操作数据，第三种监听事件（知道个大概就行了）
+[2022-1-29 更新] 为subscription的正常使用，需要服务端缓存来保证发消息给指定的用户，为此在下使用了redis来缓存这些相关数据，不需要担心复杂性，都2202年了，不会还有人不会用redis也找不到好用的库吧（不会吧不会吧）
 ## TODOS
  - [ ] users management(用户管理)
-	 - [x] ~~normal register and login~~
-	 - [x] ~~jsonwebtoken response when login succeed~~
-	 - [x] ~~token from header~~
-	 - [x] ~~search user by id~~
+	 - [x] normal register and login
+	 - [x] jsonwebtoken response when login succeed
+	 - [x] token from header
+	 - [x] search user by id
 	 - [ ] friends//this is an optional feature may not show up in early versions
 		 - [ ] send friend invite request
 		 - [ ] friend lists
 		 - [ ] custom friend list
 		 - [ ] chat with friend
  - [ ] card setting and card pool setting（卡牌和卡池设置）
-	 - [x] ~~level setting like how rare this card is（等级设置，或者说稀有度设置）~~
-		 - [x] ~~custom different way to descript how rare this will be~~
-		 - [x] ~~query settings created by current user~~
-			 - [x] ~~query one page at a time~~
-			 - [x] ~~query all page at a time~~
+	 - [x] level setting like how rare this card is（等级设置，或者说稀有度设置）
+		 - [x] custom different way to descript how rare this will be
+		 - [x] query settings created by current user
+			 - [x] query one page at a time
+			 - [x] query all page at a time
 	 - [ ] card descriptions（卡牌描述）
 		 - [ ] text fields --like name and description（文本类，像名字和简介之类的）
 		 - [ ] mark down support for description of the card
