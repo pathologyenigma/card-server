@@ -94,7 +94,9 @@ impl Token {
         })
     }
 }
-pub async fn on_connection_init(value: serde_json::Value) -> async_graphql::Result<async_graphql::Data> {
+pub async fn on_connection_init(
+    value: serde_json::Value,
+) -> async_graphql::Result<async_graphql::Data> {
     #[derive(Deserialize)]
     struct Payload {
         token: String,

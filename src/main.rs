@@ -1,13 +1,13 @@
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql_warp::{
-    graphql_subscription, GraphQLBadRequest, GraphQLResponse, GraphQLWebSocket,
+    GraphQLBadRequest, GraphQLResponse, GraphQLWebSocket,
 };
 use card_server::TokenFromHeader;
 use dotenv;
 use sea_orm::{Database, DbErr};
 use std::convert::Infallible;
 use tracing::log::{error, info};
-use warp::{http::Response, hyper::StatusCode, Filter, Rejection, ws::Ws};
+use warp::{http::Response, hyper::StatusCode, ws::Ws, Filter, Rejection};
 
 #[tokio::main]
 async fn main() -> Result<(), DbErr> {
@@ -54,23 +54,25 @@ async fn main() -> Result<(), DbErr> {
             .and(warp::header::optional::<String>("token"))
             .and(warp::any().map(move || schema.clone()))
             .and(async_graphql_warp::graphql_protocol())
-            .map(move |ws:Ws, token, schema: card_server::Schema, protocol| {
-                let reply = ws.on_upgrade(move |socket| {
-                    let mut data = async_graphql::Data::default();
-                    if let Some(token) = token {
-                        data.insert(token);
-                    }
-                    GraphQLWebSocket::new(socket, schema, protocol)
-                        .with_data(data)
-                        .on_connection_init(card_server::on_connection_init)
-                        .serve()
-                });
-                warp::reply::with_header(
-                    reply,
-                    "Sec-WebSocket-Protocol",
-                    protocol.sec_websocket_protocol(),
-                )
-            });
+            .map(
+                move |ws: Ws, token, schema: card_server::Schema, protocol| {
+                    let reply = ws.on_upgrade(move |socket| {
+                        let mut data = async_graphql::Data::default();
+                        if let Some(token) = token {
+                            data.insert(token);
+                        }
+                        GraphQLWebSocket::new(socket, schema, protocol)
+                            .with_data(data)
+                            .on_connection_init(card_server::on_connection_init)
+                            .serve()
+                    });
+                    warp::reply::with_header(
+                        reply,
+                        "Sec-WebSocket-Protocol",
+                        protocol.sec_websocket_protocol(),
+                    )
+                },
+            );
         let routes = subscription
             .or(graphql_playground)
             .or(graphql_post)

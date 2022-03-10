@@ -8,7 +8,6 @@ use redis::FromRedisValue;
 use redis::ToRedisArgs;
 use sea_orm::Set;
 use serde_json::json;
-use warp::reply::json;
 pub struct LevelValidator;
 impl CustomValidator<Vec<String>> for LevelValidator {
     fn check(&self, value: &Vec<String>) -> Result<(), String> {

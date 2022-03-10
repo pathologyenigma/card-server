@@ -1,11 +1,9 @@
-use crate::BadInputErrorHandler;
-use crate::ErrorHandlerWithErrorExtensions;
 use async_graphql::{Context, Object, Result};
 use redis::{AsyncCommands, Client};
 use sea_orm::entity::*;
 use sea_orm::query::*;
 use sea_orm::DbConn;
-use serde_json::json;
+
 use tracing::{error, info};
 #[derive(Default)]
 pub struct LevelSettingQuery;
@@ -92,7 +90,10 @@ impl LevelSettingQuery {
                                 page_size,
                                 user_id: token.id,
                             };
-                            let a: () = conn.publish("level_setting_page", data).await.unwrap();
+                            // rust don't know this is a empty tuple
+                            // if you try to remove the let and type specification
+                            // you will panic
+                            let _: () = conn.publish("level_setting_page", data).await.unwrap();
                             page_num += 1;
                         }
                         return Ok("done!".into());

@@ -11,7 +11,7 @@ warp = "0.3.2"
 dotenv = "0.15.0"
 regex = "1.5.4"
 async-graphql-warp = "3.0.17"
-sea-orm = { version = "0.5.0", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "with-json", "with-uuid"], default_features = false}
+sea-orm = { version = "0.6.0", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "with-json", "with-uuid"], default_features = false}
 tracing-subscriber = "0.3.3"
 tracing = "0.1.29"
 lazy_static = "1.4.0"
