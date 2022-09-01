@@ -15,7 +15,7 @@ impl LevelSettingSubscription {
         let token = ctx.data_opt::<crate::TokenFromHeader>();
         match token {
             Some(token) => {
-                info!("Subscription.LevelSettingSubscription.getLevelSetting accepted one request with token: {}", token.0);
+                info!("accepted one request with token: {}", token.0);
                 let token = crate::Token::decode(
                     token.0.clone(),
                     "just for now, future token will be in a config file".to_string(),

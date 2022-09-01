@@ -1,5 +1,3 @@
-#[macro_use]
-extern crate tantivy;
 use error_handling::BadInputErrorHandler;
 use lazy_static::lazy_static;
 use regex::Regex;

@@ -9,7 +9,7 @@ pub struct UserMutation;
 #[Object]
 impl UserMutation {
     async fn register(&self, ctx: &Context<'_>, input: RegisterInput) -> Result<String> {
-        info!("Mutation.UserMutation.register accepted one request");
+        info!("accepted one request");
         let mut bad_input_error_handler = ctx.data_unchecked::<BadInputErrorHandler>().clone();
         let username = input.username.trim();
         let password = input.password.trim();
@@ -22,14 +22,14 @@ impl UserMutation {
             );
         }
         if bad_input_error_handler.is_none() {
-            let user = crate::users::ActiveModel {
+            let user = crate::user::ActiveModel {
                 username: Set(username.to_owned()),
                 password: Set(password.to_owned()),
                 email: Set(email.to_owned()),
                 ..Default::default()
             };
             let db = ctx.data_unchecked::<DbConn>();
-            match crate::users::Entity::insert(user).exec(db).await {
+            match crate::user::Entity::insert(user).exec(db).await {
                 Ok(res) => {
                     return Ok(
                         crate::Token::new(res.last_insert_id, username.to_string(), email)
@@ -46,11 +46,11 @@ impl UserMutation {
                             if err.contains("重复键违反唯一约束") {
                                 let res: Vec<&str> = err.split("\"").collect();
                                 match res[1] {
-                                    "username_unique" => {
+                                    "user_username_key" => {
                                         let msg = format!("username {} is taken", username);
                                         bad_input_error_handler.append("username".to_string(), msg);
                                     }
-                                    "email_unique" => {
+                                    "user_email_key" => {
                                         let msg = format!("email {} already binded, you can try login with this email instead", email.unwrap());
                                         bad_input_error_handler.append("email".to_string(), msg);
                                     }

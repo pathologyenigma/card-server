@@ -10,14 +10,14 @@ pub struct UserQuery;
 #[Object]
 impl UserQuery {
     async fn log_in(&self, ctx: &Context<'_>, input: LoginInput) -> Result<String> {
-        info!("Query.UserQuery.logIn accepted one request");
+        info!("accepted one request");
         let db = ctx.data_unchecked::<DbConn>();
         let mut bad_input_error_handler = ctx.data_unchecked::<BadInputErrorHandler>().clone();
-        let user = crate::users::Entity::find()
+        let user = crate::user::Entity::find()
             .filter(
                 Condition::any()
-                    .add(crate::users::Column::Username.eq(input.account.clone()))
-                    .add(crate::users::Column::Email.eq(input.account.clone())),
+                    .add(crate::user::Column::Username.eq(input.account.clone()))
+                    .add(crate::user::Column::Email.eq(input.account.clone())),
             )
             .one(db)
             .await
@@ -27,7 +27,7 @@ impl UserQuery {
                 let token = crate::tokenizer::Token::from(user)
                     .encode("just for now, future token will be in a config file".to_string())
                     .expect("failed to parse token");
-                info!("Query.UserQuery.logIn send a response token: {}", token);
+                info!("send a response token: {}", token);
                 return Ok(token);
             } else {
                 error!("bad input: wrong password");
@@ -50,7 +50,7 @@ impl UserQuery {
         match token {
             Some(token) => {
                 info!(
-                    "Query.UserQuery.getUserInfoById accepted one request with token: {}",
+                    "accepted one request with token: {}",
                     token.0
                 );
                 let token = crate::Token::decode(
@@ -63,8 +63,8 @@ impl UserQuery {
                             let db = ctx.data_unchecked::<DbConn>();
                             let mut bad_input_error_handler =
                                 ctx.data_unchecked::<BadInputErrorHandler>().clone();
-                            let user = crate::users::Entity::find()
-                                .filter(Condition::all().add(crate::users::Column::Id.eq(id)))
+                            let user = crate::user::Entity::find()
+                                .filter(Condition::all().add(crate::user::Column::Id.eq(id)))
                                 .one(db)
                                 .await
                                 .expect("failed to query database");
@@ -97,7 +97,7 @@ impl UserQuery {
                 }
             }
             None => {
-                error!("Query.UserQuery.getUserInfoById accepted one request without token");
+                error!("accepted one request without token");
                 return Err(crate::new_not_authenticated_error(
                     "miss token in header".to_string(),
                 ));

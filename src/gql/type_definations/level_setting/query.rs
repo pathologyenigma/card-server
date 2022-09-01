@@ -46,7 +46,7 @@ impl LevelSettingQuery {
                 }
             }
             None => {
-                error!("Mutation.LevelSettingMutation.remove_level_setting accepted one request without token");
+                error!("accepted one request without token");
                 return Err(crate::new_not_authenticated_error(
                     "miss token in header".to_string(),
                 ));
@@ -64,7 +64,7 @@ impl LevelSettingQuery {
         let token = ctx.data_opt::<crate::TokenFromHeader>();
         match token {
             Some(token) => {
-                info!("Mutation.LevelSettingMutation.addNewSetting accepted one request with token: {}", token.0);
+                info!("accepted one request with token: {}", token.0);
                 let token = crate::Token::decode(
                     token.0.clone(),
                     "just for now, future token will be in a config file".to_string(),

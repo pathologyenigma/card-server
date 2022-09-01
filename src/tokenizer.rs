@@ -14,8 +14,8 @@ fn default_exp() -> usize {
         .expect("failed to generate exp")
         .as_secs() as usize
 }
-impl From<crate::entity::users::Model> for Token {
-    fn from(model: crate::entity::users::Model) -> Self {
+impl From<crate::entity::user::Model> for Token {
+    fn from(model: crate::entity::user::Model) -> Self {
         Self {
             id: model.id,
             username: model.username,
@@ -72,8 +72,8 @@ impl Token {
             jsonwebtoken::errors::ErrorKind::InvalidEcdsaKey => {
                 crate::new_internal_server_error("InvalidEcdsaKey".to_string())
             }
-            jsonwebtoken::errors::ErrorKind::InvalidRsaKey => {
-                crate::new_internal_server_error("InvalidRsaKey".to_string())
+            jsonwebtoken::errors::ErrorKind::InvalidRsaKey(msg) => {
+                crate::new_internal_server_error(format!("InvalidRsaKey {}", msg).to_string())
             }
             jsonwebtoken::errors::ErrorKind::InvalidAlgorithmName => {
                 crate::new_internal_server_error("InvalidAlgorithmName".to_string())
