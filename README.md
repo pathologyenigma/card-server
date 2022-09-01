@@ -44,7 +44,8 @@ migrations 是sqlx命令行工具的检索路径，用于存放迁移文件的sq
 entity文件夹是用sea-orm的命令行工具自动生成（本质上的操作就是你用sqlx-cli跑迁移，然后用sea-orm-cli生成entity）
 gql是graphql类型定义相关的代码（去async-graphql的github页面了解更多）
 
-~~tantivy是用以存放同名的文本搜索引擎的数据的文件夹（你可能看不见这个文件夹，因为不是代码故而加入了.gitignore，但你需要该文件夹才能正常编译此项目）~~项目现使用PGroonga作为postgresql文本搜索分词，所以不再需要tantivy和仓颉了
+~~tantivy是用以存放同名的文本搜索引擎的数据的文件夹（你可能看不见这个文件夹，因为不是代码故而加入了.gitignore，但你需要该文件夹才能正常编译此项目）~~
+项目现使用PGroonga作为postgresql文本搜索分词，所以不再需要tantivy和仓颉了
 
 build.rs是sqlx提供的一个功能，这个不是很重要（因为实际上用的是sea-orm），但还是说一下，这个是当你添加了新的迁移的时候会触发项目重新编译
 
