@@ -28,8 +28,8 @@ impl LevelSettingQuery {
                         let db = ctx.data_unchecked::<DbConn>();
                         let page = page.unwrap_or(0);
                         let page_size = page_size.unwrap_or(10);
-                        let res = crate::entity::level_settings::Entity::find()
-                            .filter(crate::entity::level_settings::Column::UserId.eq(token.id))
+                        let res = crate::entity::level_setting::Entity::find()
+                            .filter(crate::entity::level_setting::Column::UserId.eq(token.id))
                             .limit(page_size)
                             .offset(page * page_size)
                             .all(db)
@@ -75,8 +75,8 @@ impl LevelSettingQuery {
                         let page_size = page_size.unwrap_or(10);
                         let client = ctx.data_unchecked::<Client>();
                         let mut conn = client.get_async_connection().await.unwrap();
-                        let mut pages = crate::entity::level_settings::Entity::find()
-                            .filter(crate::entity::level_settings::Column::UserId.eq(token.id))
+                        let mut pages = crate::entity::level_setting::Entity::find()
+                            .filter(crate::entity::level_setting::Column::UserId.eq(token.id))
                             .paginate(db, page_size as usize);
                         let mut page_num = 1;
                         while let Some(page) = pages.fetch_and_next().await.unwrap() {

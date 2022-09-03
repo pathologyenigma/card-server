@@ -13,6 +13,7 @@ pub struct Query(
 pub struct Mutation(
     user::mutation::UserMutation,
     level_setting::mutation::LevelSettingMutation,
+    card::mutation::CardMutation,
 );
 #[derive(MergedSubscription, Default)]
 pub struct Subscription(level_setting::subscription::LevelSettingSubscription);

@@ -9,7 +9,7 @@ impl MigrationTrait for Migration {
         // I need one constraint on multi-feilds which is not yet supported by sea-orm
         // so I using raw sql here
        let sql = r#"
-       CREATE TABLE public.level_settings
+       CREATE TABLE public.level_setting
        (
            id uuid NOT NULL,
            user_id integer NOT NULL,
@@ -34,7 +34,7 @@ impl MigrationTrait for Migration {
         // cause we don't have a enum for table
         // so drop table should also be raw sql
         let sql = r#"
-        DROP TABLE public.level_settings;
+        DROP TABLE public.level_setting;
         "#;
         let stmt = Statement::from_string(manager.get_database_backend(), sql.to_owned());
         manager.get_connection().execute(stmt).await.map(|_| ())

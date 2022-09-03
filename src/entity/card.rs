@@ -3,27 +3,26 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
-#[sea_orm(table_name = "level_settings")]
+#[sea_orm(table_name = "card")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
-    pub user_id: i32,
-    pub title: String,
-    pub is_numberic_level: bool,
-    pub counts: Option<i32>,
-    pub levels: Json,
-    #[sea_orm(column_type = "Text")]
-    pub tip_for_setting_user: String,
+    pub name: String,
+    pub description: String,
+    pub logo: Option<String>,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub effects: Option<String>,
+    pub created_by: i32,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
         belongs_to = "super::user::Entity",
-        from = "Column::UserId",
+        from = "Column::CreatedBy",
         to = "super::user::Column::Id",
-        on_update = "Cascade",
-        on_delete = "Cascade"
+        on_update = "NoAction",
+        on_delete = "NoAction"
     )]
     User,
 }

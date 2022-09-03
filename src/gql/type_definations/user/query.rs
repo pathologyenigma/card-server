@@ -49,10 +49,7 @@ impl UserQuery {
         let token = ctx.data_opt::<crate::TokenFromHeader>();
         match token {
             Some(token) => {
-                info!(
-                    "accepted one request with token: {}",
-                    token.0
-                );
+                info!("accepted one request with token: {}", token.0);
                 let token = crate::Token::decode(
                     token.0.clone(),
                     "just for now, future token will be in a config file".to_string(),
@@ -61,8 +58,6 @@ impl UserQuery {
                     Ok(token) => match id {
                         Some(id) => {
                             let db = ctx.data_unchecked::<DbConn>();
-                            let mut bad_input_error_handler =
-                                ctx.data_unchecked::<BadInputErrorHandler>().clone();
                             let user = crate::user::Entity::find()
                                 .filter(Condition::all().add(crate::user::Column::Id.eq(id)))
                                 .one(db)
@@ -76,11 +71,10 @@ impl UserQuery {
                                     });
                                 }
                                 None => {
-                                    bad_input_error_handler.append(
-                                        "id".to_string(),
-                                        format!("user of id {} is not exist", id),
-                                    );
-                                    return Err(bad_input_error_handler.to_err());
+                                    return Err(crate::new_not_found_error(format!(
+                                        "User {} not found",
+                                        id
+                                    )));
                                 }
                             }
                         }

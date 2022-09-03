@@ -5,6 +5,7 @@ mod gql;
 pub use gql::*;
 pub mod entity;
 pub use entity::*;
+pub mod traits;
 use redis::Client;
 use sea_orm::DbConn;
 // fn init_tantivy(ctx: Schema) -> Schema {

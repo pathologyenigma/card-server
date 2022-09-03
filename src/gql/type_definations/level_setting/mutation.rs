@@ -1,5 +1,5 @@
 use std::str::FromStr;
-
+use crate::traits::prelude::ToModel;
 use crate::BadInputErrorHandler;
 use crate::ErrorHandlerWithErrorExtensions;
 use async_graphql::{Context, Object, Result};
@@ -42,7 +42,7 @@ impl LevelSettingMutation {
                             return Err(check_result.unwrap_err());
                         }
                         let level_setting = prefixed_input.clone().to_model(user_id);
-                        let res = crate::entity::level_settings::Entity::insert(level_setting)
+                        let res = crate::entity::level_setting::Entity::insert(level_setting)
                             .exec(db)
                             .await;
                         match res {
@@ -106,9 +106,9 @@ impl LevelSettingMutation {
                 match token {
                     Ok(token) => {
                         let db = ctx.data_unchecked::<DbConn>();
-                        let res = crate::entity::level_settings::Entity::delete_many()
+                        let res = crate::entity::level_setting::Entity::delete_many()
                             .filter(
-                                crate::entity::level_settings::Column::Id.is_in(
+                                crate::entity::level_setting::Column::Id.is_in(
                                     ids.into_iter()
                                         .map(|id| {
                                             return uuid::Uuid::from_str(id.as_str()).unwrap();
@@ -116,7 +116,7 @@ impl LevelSettingMutation {
                                         .collect::<Vec<uuid::Uuid>>(),
                                 ),
                             )
-                            .filter(crate::entity::level_settings::Column::UserId.eq(token.id))
+                            .filter(crate::entity::level_setting::Column::UserId.eq(token.id))
                             .exec(db)
                             .await
                             .unwrap()

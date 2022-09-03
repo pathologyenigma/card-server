@@ -16,13 +16,21 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::level_settings::Entity")]
-    LevelSettings,
+    #[sea_orm(has_many = "super::level_setting::Entity")]
+    LevelSetting,
+    #[sea_orm(has_many = "super::card::Entity")]
+    Card,
 }
 
-impl Related<super::level_settings::Entity> for Entity {
+impl Related<super::level_setting::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::LevelSettings.def()
+        Relation::LevelSetting.def()
+    }
+}
+
+impl Related<super::card::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Card.def()
     }
 }
 

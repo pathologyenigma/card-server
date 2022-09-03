@@ -1,4 +1,4 @@
-use crate::entity::level_settings::ActiveModel;
+use crate::entity::level_setting::ActiveModel;
 use crate::BadInputErrorHandler;
 use crate::ErrorHandlerWithErrorExtensions;
 use async_graphql::CustomValidator;
@@ -51,17 +51,6 @@ pub struct NewLevelSetting {
 }
 
 impl NewLevelSetting {
-    pub fn to_model(self, user_id: i32) -> ActiveModel {
-        ActiveModel {
-            id: Set(uuid::Uuid::new_v4()),
-            user_id: Set(user_id.to_owned()),
-            title: Set(self.title.to_owned()),
-            is_numberic_level: Set(self.is_numberic_level.to_owned()),
-            levels: Set(serde_json::json!(self.levels)),
-            counts: Set(self.counts.to_owned()),
-            tip_for_setting_user: Set(self.tip_for_setting_user.unwrap().to_owned()),
-        }
-    }
     pub fn check_valid(
         &mut self,
         mut err_handler: BadInputErrorHandler,
@@ -99,6 +88,21 @@ impl NewLevelSetting {
         Ok(())
     }
 }
+impl crate::traits::prelude::ToModel for NewLevelSetting {
+    type Args = i32;
+    type Output = ActiveModel;
+    fn to_model(self, args: Self::Args) -> Self::Output {
+        ActiveModel {
+            id: Set(uuid::Uuid::new_v4()),
+            user_id: Set(args.to_owned()),
+            title: Set(self.title.to_owned()),
+            is_numberic_level: Set(self.is_numberic_level.to_owned()),
+            levels: Set(serde_json::json!(self.levels)),
+            counts: Set(self.counts.to_owned()),
+            tip_for_setting_user: Set(self.tip_for_setting_user.unwrap().to_owned()),
+        }
+    }
+}
 #[derive(SimpleObject, Serialize, Deserialize)]
 /// insert result for adding a new setting
 pub struct LevelSetting {
@@ -112,8 +116,8 @@ pub struct LevelSetting {
     pub tip_for_setting_user: String,
 }
 
-impl From<crate::entity::level_settings::Model> for LevelSetting {
-    fn from(value: crate::entity::level_settings::Model) -> Self {
+impl From<crate::entity::level_setting::Model> for LevelSetting {
+    fn from(value: crate::entity::level_setting::Model) -> Self {
         Self {
             id: value.id.to_string(),
             title: value.title,
