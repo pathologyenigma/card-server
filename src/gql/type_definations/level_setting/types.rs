@@ -7,8 +7,8 @@ use async_graphql::SimpleObject;
 use redis::FromRedisValue;
 use redis::ToRedisArgs;
 use sea_orm::Set;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
-use serde::{Serialize, Deserialize};
 pub struct LevelValidator;
 impl CustomValidator<Vec<String>> for LevelValidator {
     fn check(&self, value: &Vec<String>) -> Result<(), String> {

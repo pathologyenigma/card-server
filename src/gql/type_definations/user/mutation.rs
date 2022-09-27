@@ -43,23 +43,16 @@ impl UserMutation {
                     error!("{:?}", err);
                     match err {
                         sea_orm::DbErr::Query(err) => {
-                            if err.contains("重复键违反唯一约束") {
-                                let res: Vec<&str> = err.split("\"").collect();
-                                match res[1] {
-                                    "user_username_key" => {
-                                        let msg = format!("username {} is taken", username);
-                                        bad_input_error_handler.append("username".to_string(), msg);
-                                    }
-                                    "user_email_key" => {
-                                        let msg = format!("email {} already binded, you can try login with this email instead", email.unwrap());
-                                        bad_input_error_handler.append("email".to_string(), msg);
-                                    }
-                                    _ => {
-                                        return Err(Error::new_with_source("unknown error"));
-                                    }
-                                }
+                            if err.contains("user_username_key") {
+                                let msg = format!("username {} is taken", username);
+                                bad_input_error_handler.append("username".to_string(), msg);
+                                return Err(bad_input_error_handler.to_err());
+                            } else if err.contains("user_email_key") {
+                                let msg = format!("email {} already binded, you can try login with this email instead", email.unwrap());
+                                bad_input_error_handler.append("email".to_string(), msg);
+                                return Err(bad_input_error_handler.to_err());
                             } else {
-                                return Err(Error::new_with_source(err));
+                                return Err(crate::new_internal_server_error(err));
                             }
                         }
                         _ => return Err(Error::new_with_source(err)),

@@ -9,7 +9,7 @@ pub mod traits;
 use redis::Client;
 use sea_orm::DbConn;
 // fn init_tantivy(ctx: Schema) -> Schema {
-    
+
 // }
 pub fn build(pool: DbConn) -> Schema {
     let bad_input_error_handler = BadInputErrorHandler::default();
@@ -38,4 +38,3 @@ lazy_static! {
 }
 #[derive(Clone, Debug)]
 pub struct TokenFromHeader(pub String);
-

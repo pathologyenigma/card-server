@@ -24,28 +24,20 @@ impl CardMutation {
                             ctx.data_unchecked::<BadInputErrorHandler>().clone();
                         match input.check_valid(bad_input_error_handler.clone()) {
                             Ok(_) => {
-                                match
-                                    crate::card::Entity::insert(input.clone().to_model(user.id))
-                                        .exec(db)
-                                        .await
+                                match crate::card::Entity::insert(input.clone().to_model(user.id))
+                                    .exec(db)
+                                    .await
                                 {
                                     Err(err) => {
                                         match err {
                                             sea_orm::DbErr::Query(err) => {
-                                                if err.contains("重复键违反唯一约束") {
-                                                    let res: Vec<&str> = err.split("\"").collect();
-                                                    match res[1] {
-                                                            "one_card_name_could_only_exist_one_for_one_user" => {
-                                                                let msg = format!("card with name {} already exists", input.name);
-                                                                bad_input_error_handler.append("name".to_string(), msg);
-                                                            }
-                                                            _ => {
-                                                                return Err(Error::new_with_source("unknown error"));
-                                                            }
-                                                        }
-                                                } else {
-                                                    return Err(Error::new_with_source(err));
-                                                }
+                                                if err.contains("one_card_name_could_only_exist_one_for_one_user") {
+                                                error!("{}", err);
+                                                bad_input_error_handler.append("one_card_name_could_only_exist_one_for_one_user".to_owned(), format!("card with name {} already exists", input.name));
+                                                return Err(bad_input_error_handler.to_err());
+                                            } else {
+                                                return Err(Error::new_with_source(err));
+                                            }
                                             }
                                             _ => return Err(Error::new_with_source(err)),
                                         }
@@ -53,7 +45,6 @@ impl CardMutation {
                                     Ok(res) => {
                                         return Ok(res.last_insert_id);
                                     }
-                                    
                                 }
                             }
                             Err(e) => {
@@ -73,6 +64,5 @@ impl CardMutation {
                 ));
             }
         }
-        unreachable!("")
     }
 }

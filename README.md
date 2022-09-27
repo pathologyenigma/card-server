@@ -18,7 +18,7 @@
 		 - entity
 		 - gql
 		 - some other code
-	- tantivy
+	~~- tantivy~~
 	- build.rs
 	- sqlx-data.json
 

@@ -1,17 +1,17 @@
-use async_graphql::{InputObject, CustomValidator, SimpleObject};
-use serde::{Serialize, Deserialize};
-use sea_orm::Set;
 use crate::entity::card::ActiveModel;
 use crate::traits::prelude::ToModel;
 use crate::BadInputErrorHandler;
+use async_graphql::{CustomValidator, InputObject, SimpleObject};
+use sea_orm::Set;
+use serde::{Deserialize, Serialize};
 pub struct CardNameValidator;
 impl CustomValidator<String> for CardNameValidator {
     fn check(&self, value: &String) -> Result<(), String> {
         if value.trim().is_empty() {
-            return Err("empty name not allowed".to_string())
+            return Err("empty name not allowed".to_string());
         }
         if value.trim().len() > 20 {
-            return Err("card name too long".to_string())
+            return Err("card name too long".to_string());
         }
         Ok(())
     }
@@ -53,7 +53,6 @@ pub struct Card {
     pub effects: Option<String>,
 }
 
-
 impl ToModel for NewCard {
     type Args = i32;
     type Output = ActiveModel;
@@ -74,6 +73,6 @@ impl NewCard {
     /// for now we don't have a rule for it
     /// so will always return Ok(())
     pub fn check_valid(&self, mut _err_handler: BadInputErrorHandler) -> async_graphql::Result<()> {
-        Ok(())        
+        Ok(())
     }
 }

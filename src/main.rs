@@ -1,7 +1,5 @@
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
-use async_graphql_warp::{
-    GraphQLBadRequest, GraphQLResponse, GraphQLWebSocket,
-};
+use async_graphql_warp::{GraphQLBadRequest, GraphQLResponse, GraphQLWebSocket};
 use card_server::TokenFromHeader;
 use dotenv;
 use sea_orm::{Database, DbErr};

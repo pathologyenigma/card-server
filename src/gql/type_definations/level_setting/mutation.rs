@@ -1,4 +1,3 @@
-use std::str::FromStr;
 use crate::traits::prelude::ToModel;
 use crate::BadInputErrorHandler;
 use crate::ErrorHandlerWithErrorExtensions;
@@ -6,6 +5,7 @@ use async_graphql::{Context, Object, Result};
 use sea_orm::entity::*;
 use sea_orm::query::*;
 use sea_orm::DbConn;
+use std::str::FromStr;
 use tracing::{error, info};
 #[derive(Default)]
 pub struct LevelSettingMutation;
@@ -61,10 +61,9 @@ impl LevelSettingMutation {
                             }
                             Err(err) => match err {
                                 sea_orm::DbErr::Query(msg) => {
-                                    if msg.contains("重复键违反唯一约束") {
-                                        let msg: Vec<&str> = msg.split("\"").collect();
+                                    if msg.contains("one_user_could_not_have_two_level_setting_of_the_same_name") {
                                         bad_input_error_handler
-                                            .append("title".to_string(), msg[1].to_string());
+                                            .append("one_user_could_not_have_two_level_setting_of_the_same_name".to_string(), format!("level setting with title {} is already exists", prefixed_input.title));
                                         return Err(bad_input_error_handler.to_err());
                                     } else {
                                         return Err(crate::new_internal_server_error(msg));
