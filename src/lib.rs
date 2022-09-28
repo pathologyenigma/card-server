@@ -8,6 +8,7 @@ pub use entity::*;
 pub mod traits;
 use redis::Client;
 use sea_orm::DbConn;
+pub mod pass_hash;
 // fn init_tantivy(ctx: Schema) -> Schema {
 
 // }

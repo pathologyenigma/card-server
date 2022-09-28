@@ -24,7 +24,7 @@ impl UserMutation {
         if bad_input_error_handler.is_none() {
             let user = crate::user::ActiveModel {
                 username: Set(username.to_owned()),
-                password: Set(password.to_owned()),
+                password: Set(crate::pass_hash::hash(password).expect("failed to hash password")),
                 email: Set(email.to_owned()),
                 ..Default::default()
             };

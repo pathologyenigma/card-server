@@ -23,7 +23,7 @@ impl UserQuery {
             .await
             .expect("failed to query database");
         if let Some(user) = user {
-            if user.password == input.password {
+            if let Ok(_) = crate::pass_hash::verify(&input.password, &user.password) {
                 let token = crate::tokenizer::Token::from(user)
                     .encode("just for now, future token will be in a config file".to_string())
                     .expect("failed to parse token");
